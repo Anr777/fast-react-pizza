@@ -7,6 +7,7 @@ import { Loader } from "./Loader";
 export const AppLayout = () => {
 
   const navigation = useNavigation();
+  
   const isLoading = navigation.state === 'loading';
 
   return (
