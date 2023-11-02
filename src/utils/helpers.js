@@ -1,8 +1,9 @@
 export function formatCurrency(value) {
-  return new Intl.NumberFormat("en", {
+  const formattedValue = new Intl.NumberFormat("en", {
     style: "currency",
-    currency: "EUR",
+    currency: "PEN",
   }).format(value);
+  return formattedValue.replace('PEN', 'S/.')
 }
 
 export function formatDate(dateStr) {

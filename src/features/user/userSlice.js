@@ -1,3 +1,6 @@
+// import { getAddress } from "../../services";
+
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAddress } from "../../services";
 
 function getPosition() {
@@ -6,8 +9,7 @@ function getPosition() {
   });
 }
 
-async function fetchAddress() {
-  // 1) We get the user's geolocation position
+export const fetchAddress =  createAsyncThunk('user/fetchAddress', async() => {
   const positionObj = await getPosition();
   const position = {
     latitude: positionObj.coords.latitude,
@@ -20,4 +22,39 @@ async function fetchAddress() {
 
   // 3) Then we return an object with the data that we are interested in
   return { position, address };
-}
+})
+
+const initialState = {
+  username: '',
+  status: 'idle',
+  position: {},
+  address: '',
+  error: '',
+};
+
+export const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    updateName( state, action ) {
+      state.username = action.payload;
+    },
+  },
+
+  extraReducers: ( builder ) => builder.addCase(fetchAddress.pending, ( state, action ) => {
+     state.status = 'loading';
+  }).addCase(fetchAddress.fulfilled, ( state, action) => {
+    state.position = action.payload.position;
+    state.address = action.payload.address;
+    state.status = 'idle';
+  }).addCase(fetchAddress.rejected, ( state, action ) => {
+    state.status = 'error';
+    state.error = 'There was a problem getting your address. Make sure to fill this field!';
+  })
+});
+
+export const {
+  updateName,
+} = userSlice.actions;
+
+// export default userSlice.reducer;
